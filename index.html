@@ -3,6 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0F0D">
 <meta name="description" content="GPS HQ: a phone app for a Cleveland house flipper. Sample data.">
 <meta charset="utf-8">
 <title>GPS HQ</title>
@@ -10,37 +11,51 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout: soft canvas, white rounded cards, near-black pills. Phone = one column + floating tab pill.
-   Desktop = main board + an "AI team" side panel, like a live-chat rail. */
+/* Green, white and black with Liquid Glass: frosted panels over a soft green canvas.
+   Phone = one column + floating glass tab bar. Desktop = main area + the AI team panel on the right. */
 :root {
-  --bg: #F1F0F4; --glow1: #E4E3FA; --glow2: #F6E9DF; --card: #FFFFFF; --card2: #F7F7FA;
-  --ink: #171615; --ink2: #3F3E46; --muted: #7C7B86; --line: #E9E8EE; --soft: #F1F1F5;
-  --blue: #3E63DD; --blue-soft: #E6ECFD; --orange: #F2762E; --orange-soft: #FDEBDF;
-  --green: #2F9E66; --green-soft: #E2F4EA; --red: #E5484D; --red-soft: #FDE7E7;
-  --violet: #7C66DC; --violet-soft: #EEEAFC; --teal: #12A594; --teal-soft: #DDF5F1;
-  --pill: #171615; --pill-ink: #FFFFFF;
-  --shadow: 0 1px 2px rgba(23, 22, 40, .04), 0 10px 30px rgba(23, 22, 40, .05);
+  --bg: #EDF3EF; --glow1: rgba(34, 197, 94, .26); --glow2: rgba(16, 163, 74, .16); --glow3: rgba(11, 15, 13, .07);
+  --card: rgba(255, 255, 255, .64); --card2: rgba(11, 15, 13, .035); --solid: #FFFFFF;
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, .82), rgba(255, 255, 255, .56));
+  --glass-edge: rgba(255, 255, 255, .85); --glass-hi: rgba(255, 255, 255, .95); --blur: blur(22px) saturate(170%);
+  --ink: #0B0F0D; --ink2: #2D3832; --muted: #5F6C64; --line: rgba(11, 15, 13, .09); --soft: rgba(11, 15, 13, .055);
+  --accent: #128C4A; --accent-ink: #FFFFFF;
+  --blue: #128C4A; --blue-soft: rgba(18, 140, 74, .12); --green: #128C4A; --green-soft: rgba(18, 140, 74, .12);
+  --teal: #0A6B38; --teal-soft: rgba(10, 107, 56, .12); --violet: #0B0F0D; --violet-soft: rgba(11, 15, 13, .07);
+  --orange: #B26B12; --orange-soft: rgba(196, 122, 20, .14); --red: #CF2E37; --red-soft: rgba(207, 46, 55, .11);
+  --pill: #0B0F0D; --pill-ink: #FFFFFF; --bar: rgba(11, 15, 13, .78);
+  --shadow: 0 1px 1px rgba(0, 0, 0, .03), 0 10px 28px rgba(8, 48, 24, .09);
   --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0E0E12; --glow1: #1B1A2E; --glow2: #221A16; --card: #17171C; --card2: #1D1D23;
-  --ink: #F2F1F5; --ink2: #CFCED8; --muted: #8E8D99; --line: #26262E; --soft: #22222A;
-  --blue: #7C9BFF; --blue-soft: #1E2547; --orange: #FF9452; --orange-soft: #3A2417;
-  --green: #4CC38A; --green-soft: #15301F; --red: #FF6B70; --red-soft: #3A1A1C;
-  --violet: #A896FF; --violet-soft: #2A2448; --teal: #3DD6C3; --teal-soft: #11302C;
-  --pill: #F2F1F5; --pill-ink: #141418; --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .25); color-scheme: dark } }
+  --bg: #050806; --glow1: rgba(34, 197, 94, .22); --glow2: rgba(16, 163, 74, .12); --glow3: rgba(255, 255, 255, .04);
+  --card: rgba(255, 255, 255, .07); --card2: rgba(255, 255, 255, .05); --solid: #111614;
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .045));
+  --glass-edge: rgba(255, 255, 255, .13); --glass-hi: rgba(255, 255, 255, .2);
+  --ink: #F0F5F1; --ink2: #CFDAD3; --muted: #8C9A91; --line: rgba(255, 255, 255, .09); --soft: rgba(255, 255, 255, .07);
+  --accent: #3DDC84; --accent-ink: #04140A;
+  --blue: #3DDC84; --blue-soft: rgba(61, 220, 132, .15); --green: #3DDC84; --green-soft: rgba(61, 220, 132, .15);
+  --teal: #8BF0B8; --teal-soft: rgba(139, 240, 184, .13); --violet: #F0F5F1; --violet-soft: rgba(255, 255, 255, .09);
+  --orange: #F2B04C; --orange-soft: rgba(242, 176, 76, .14); --red: #FF6B70; --red-soft: rgba(255, 107, 112, .14);
+  --pill: #F0F5F1; --pill-ink: #050806; --bar: rgba(30, 36, 33, .72);
+  --shadow: 0 1px 1px rgba(0, 0, 0, .4), 0 12px 32px rgba(0, 0, 0, .45); color-scheme: dark } }
 :root[data-theme="dark"] {
-  --bg: #0E0E12; --glow1: #1B1A2E; --glow2: #221A16; --card: #17171C; --card2: #1D1D23;
-  --ink: #F2F1F5; --ink2: #CFCED8; --muted: #8E8D99; --line: #26262E; --soft: #22222A;
-  --blue: #7C9BFF; --blue-soft: #1E2547; --orange: #FF9452; --orange-soft: #3A2417;
-  --green: #4CC38A; --green-soft: #15301F; --red: #FF6B70; --red-soft: #3A1A1C;
-  --violet: #A896FF; --violet-soft: #2A2448; --teal: #3DD6C3; --teal-soft: #11302C;
-  --pill: #F2F1F5; --pill-ink: #141418; --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .25); color-scheme: dark }
+  --bg: #050806; --glow1: rgba(34, 197, 94, .22); --glow2: rgba(16, 163, 74, .12); --glow3: rgba(255, 255, 255, .04);
+  --card: rgba(255, 255, 255, .07); --card2: rgba(255, 255, 255, .05); --solid: #111614;
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .045));
+  --glass-edge: rgba(255, 255, 255, .13); --glass-hi: rgba(255, 255, 255, .2);
+  --ink: #F0F5F1; --ink2: #CFDAD3; --muted: #8C9A91; --line: rgba(255, 255, 255, .09); --soft: rgba(255, 255, 255, .07);
+  --accent: #3DDC84; --accent-ink: #04140A;
+  --blue: #3DDC84; --blue-soft: rgba(61, 220, 132, .15); --green: #3DDC84; --green-soft: rgba(61, 220, 132, .15);
+  --teal: #8BF0B8; --teal-soft: rgba(139, 240, 184, .13); --violet: #F0F5F1; --violet-soft: rgba(255, 255, 255, .09);
+  --orange: #F2B04C; --orange-soft: rgba(242, 176, 76, .14); --red: #FF6B70; --red-soft: rgba(255, 107, 112, .14);
+  --pill: #F0F5F1; --pill-ink: #050806; --bar: rgba(30, 36, 33, .72);
+  --shadow: 0 1px 1px rgba(0, 0, 0, .4), 0 12px 32px rgba(0, 0, 0, .45); color-scheme: dark }
 
 * { box-sizing: border-box }
 html { background: var(--bg) }
 body { margin: 0; min-height: 100vh; color: var(--ink); font: 500 14.5px/1.45 var(--font); -webkit-font-smoothing: antialiased;
-  background: radial-gradient(900px 500px at -10% -10%, var(--glow1), transparent 60%), radial-gradient(700px 500px at 110% 0%, var(--glow2), transparent 60%), var(--bg); background-attachment: fixed }
+  background: radial-gradient(900px 620px at -8% -6%, var(--glow1), transparent 62%), radial-gradient(760px 560px at 108% 18%, var(--glow2), transparent 60%), radial-gradient(900px 700px at 40% 112%, var(--glow3), transparent 62%), var(--bg); background-attachment: fixed }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
 a { color: inherit }
 button, input, select, textarea { font: inherit; color: inherit }
@@ -54,24 +69,25 @@ svg.i { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-widt
 @media (min-width: 1080px) { .cols { grid-template-columns: minmax(0, 1fr) 360px; align-items: start } .rail { position: sticky; top: 84px } .shell { padding-bottom: 40px } }
 
 /* header */
-.top { display: flex; align-items: center; gap: 10px; padding-block: 16px 12px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background: linear-gradient(var(--bg) 70%, transparent) }
+.top { display: flex; align-items: center; gap: 10px; padding-block: 16px 12px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6 }
 .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; letter-spacing: .04em }
-.logo b { width: 38px; height: 38px; border-radius: 11px; background: var(--pill); color: var(--pill-ink); display: grid; place-items: center }
+.logo b { width: 38px; height: 38px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 6px 16px rgba(18, 140, 74, .35) }
 .top .sp { flex: 1 }
 .rb { width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 0; box-shadow: var(--shadow); display: grid; place-items: center; cursor: pointer; position: relative; color: var(--ink) }
-.rb .badge { position: absolute; top: 6px; right: 6px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--orange); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--card) }
-.me { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--violet)); color: #fff; display: grid; place-items: center; font-weight: 800 }
+.rb .badge { position: absolute; top: 6px; right: 6px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-size: 10px; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--solid) }
+.me { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #22C55E, #0B0F0D); color: #fff; display: grid; place-items: center; font-weight: 800 }
 .sync { font-size: 12px; color: var(--muted); white-space: nowrap }
 
 /* nav pill */
 .nav { display: none; background: var(--card); border-radius: 999px; padding: 6px; box-shadow: var(--shadow); gap: 4px; margin-bottom: 18px }
 .nav button { flex: 1; border: 0; background: none; padding: 10px 14px; border-radius: 999px; font-weight: 600; cursor: pointer; color: var(--ink2); display: inline-flex; align-items: center; justify-content: center; gap: 8px }
 .nav button[aria-current="page"] { background: var(--pill); color: var(--pill-ink) }
-.cnt { font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--orange); color: #fff; display: inline-grid; place-items: center }
+.cnt { font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--accent); color: var(--accent-ink); display: inline-grid; place-items: center }
 
-.tabbar { position: fixed; z-index: 8; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: min(420px, calc(100% - 28px)); background: var(--pill); border-radius: 999px; padding: 6px; display: grid; grid-template-columns: repeat(5, 1fr); box-shadow: 0 12px 40px rgba(0, 0, 0, .25) }
-.tabbar button { border: 0; background: none; color: var(--pill-ink); opacity: .6; padding: 9px 0 7px; border-radius: 999px; display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 600; cursor: pointer; position: relative }
-.tabbar button[aria-current="page"] { opacity: 1; background: color-mix(in srgb, var(--pill-ink) 14%, transparent) }
+.tabbar { position: fixed; z-index: 8; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: min(420px, calc(100% - 28px)); background: var(--bar); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255, 255, 255, .14); border-radius: 999px; padding: 6px; display: grid; grid-template-columns: repeat(5, 1fr); box-shadow: 0 12px 40px rgba(0, 0, 0, .25) }
+.tabbar button { border: 0; background: none; color: #fff; opacity: .62; padding: 9px 0 7px; border-radius: 999px; display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 600; cursor: pointer; position: relative }
+.tabbar button[aria-current="page"] { opacity: 1; background: rgba(255, 255, 255, .16); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); color: #fff }
+.tabbar button[aria-current="page"] svg { color: #4ADE80 }
 .tabbar .cnt { position: absolute; top: 2px; right: calc(50% - 22px); min-width: 16px; height: 16px; font-size: 10px }
 
 /* hero */
@@ -148,7 +164,7 @@ details summary::-webkit-details-marker { display: none }
 .team { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px }
 .mate { display: grid; justify-items: center; gap: 4px; font-size: 12px; font-weight: 600; flex: none; width: 56px }
 .mate .av { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; position: relative }
-.mate .av em { position: absolute; top: -2px; right: -2px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--orange); font-size: 10px; font-style: normal; display: grid; place-items: center; border: 2px solid var(--card) }
+.mate .av em { position: absolute; top: -2px; right: -2px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: 10px; font-style: normal; display: grid; place-items: center; border: 2px solid var(--card) }
 .mate.soon .av { background: var(--soft) !important; color: var(--muted); border: 1.5px dashed var(--muted) }
 .mate.soon { color: var(--muted) }
 .online { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--green); background: var(--green-soft); padding: 4px 10px; border-radius: 999px }
@@ -255,12 +271,20 @@ td.r, th.r { text-align: right }
 .tile b { font-size: 15px; font-weight: 800; line-height: 1.2 }
 .tile small { font-size: 12.5px; color: var(--muted); line-height: 1.3 }
 .trunc2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
-.tile .dot { position: absolute; top: 12px; right: 12px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--orange); color: #fff; font-size: 11.5px; font-weight: 800; display: grid; place-items: center }
+.tile .dot { position: absolute; top: 12px; right: 12px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--accent); color: var(--accent-ink); font-size: 11.5px; font-weight: 800; display: grid; place-items: center }
 .toolhead { display: flex; align-items: center; gap: 12px; margin: 4px 0 16px; flex-wrap: wrap }
 .toolhead h2 { font-size: 24px }
 .focus .hero:not([data-keep]) { display: none }
 .focus .grid { grid-template-columns: minmax(0, 1fr) !important }
 .zlist { display: grid; gap: 8px }
+.edits { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)) }
+@media (min-width: 640px) { .edits { grid-template-columns: repeat(3, minmax(0, 1fr)) } }
+.edits .field input, .lrow input { width: 100%; border: 1.5px solid var(--line); background: var(--card2); border-radius: 12px; padding: 10px 12px; font-weight: 600 }
+.edits .field input:focus, .lrow input:focus { border-color: var(--accent); outline: 0 }
+.lrow { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 8px; margin-top: 8px }
+.lrow.lh span { font-size: 12px; color: var(--muted); font-weight: 600 }
+.tact { margin-left: 10px; border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 800; border-radius: 999px; padding: 5px 12px; cursor: pointer }
+.top { -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); background: color-mix(in srgb, var(--bg) 55%, transparent); margin-inline: -16px; padding-inline: 16px }
 @media (min-width: 900px) { .zlist { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
 .zrow { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: var(--card2); border: 0; width: 100%; text-align: left; cursor: pointer; color: var(--ink) }
 .zrow > b { font-size: 16px; font-weight: 800; width: 52px; flex: none }
@@ -317,6 +341,24 @@ h2.sec { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin: 0 }
   @keyframes rise { from { opacity: .3; transform: translateY(8px) } }
   .bar i, .arc { transition: width .6s ease, stroke-dashoffset .6s ease }
 }
+
+/* Liquid Glass: every panel is frosted glass with a bright top edge */
+.card, .stat, .tile, .hc, .nav, .rb, .col, .demo, .toast {
+  background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge); box-shadow: inset 0 1px 0 var(--glass-hi), var(--shadow) }
+.col { box-shadow: inset 0 1px 0 var(--glass-hi) }
+.toast { background: var(--bar); color: #fff; border-color: rgba(255, 255, 255, .14) }
+.btn { background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: inset 0 1px 0 var(--glass-hi) }
+.btn.dark { background: var(--pill); color: var(--pill-ink); border-color: var(--pill); box-shadow: 0 6px 16px rgba(0, 0, 0, .18) }
+.btn.go { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 6px 18px rgba(18, 140, 74, .3) }
+.nav button[aria-current="page"] { background: var(--pill); color: var(--pill-ink); box-shadow: 0 4px 14px rgba(0, 0, 0, .18) }
+.need, .kv div, .stop, .opt, .zrow { background: var(--card2) }
+.facade .lab { background: var(--solid) }
+.sheet { background: radial-gradient(900px 620px at -8% -6%, var(--glow1), transparent 62%), radial-gradient(760px 560px at 108% 18%, var(--glow2), transparent 60%), var(--bg) }
+.tile .ic.g { background: var(--accent); color: var(--accent-ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 4px 12px rgba(18, 140, 74, .28) }
+.tile .ic.k { background: var(--pill); color: var(--pill-ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 4px 12px rgba(0, 0, 0, .18) }
+.hello em { font-style: normal; color: var(--accent) }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .card, .stat, .tile, .hc, .nav, .rb, .col { background: var(--solid) } }
 </style>
 
 <div class="shell">
@@ -380,7 +422,11 @@ function hm(d) { return d.toLocaleTimeString('en-US', { hour: 'numeric', minute:
 function md(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }
 function dayName(d) { return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) }
 function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem('gpshq.' + k)); localStorage.setItem('gpshq.' + k, JSON.stringify(v)) } catch (e) { return null } }
-function toast(msg) { var t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true }, 2600) }
+function toast(msg, act) {
+  var t = $('#toast'); t.innerHTML = esc(msg) + (act ? ' <button type="button" class="tact">' + esc(act.label) + '</button>' : ''); t.hidden = false;
+  if (act) t.querySelector('.tact').onclick = function () { t.hidden = true; act.fn() };
+  clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true }, act ? 6000 : 2600);
+}
 function claudeLink(q) { return 'https://claude.ai/new?q=' + encodeURIComponent(q) }
 function mapsQuery(a) { return /\b(oh|ohio|441\d\d)\b/i.test(a) ? a : a + ', Cleveland, OH' }
 var LIVE = typeof google !== 'undefined' && google.script && google.script.run;
@@ -448,9 +494,9 @@ function stageOf(s) {
   return 'Other';
 }
 var STAGE = {
-  Buying: { c: 'orange', lab: 'BUYING', name: 'Buying' }, Rehab: { c: 'blue', lab: 'FIXING UP', name: 'Fixing up' }, Listed: { c: 'violet', lab: 'FOR SALE', name: 'For sale' },
+  Buying: { c: 'ink', lab: 'BUYING', name: 'Buying' }, Rehab: { c: 'blue', lab: 'FIXING UP', name: 'Fixing up' }, Listed: { c: 'teal', lab: 'FOR SALE', name: 'For sale' },
   'Under contract': { c: 'ink', lab: 'SALE PENDING', name: 'Sale pending' }, Refi: { c: 'teal', lab: 'NEW LOAN', name: 'Getting a new loan' }, Held: { c: 'green', lab: 'KEEPING', name: 'Keeping (rented)' },
-  Sold: { c: 'green', lab: 'SOLD', name: 'Sold' }, Other: { c: 'muted', lab: 'OTHER', name: 'Other' }
+  Sold: { c: 'muted', lab: 'SOLD', name: 'Sold' }, Other: { c: 'muted', lab: 'OTHER', name: 'Other' }
 };
 function stageName(s) { return (STAGE[s] || STAGE.Other).name }
 function stageColor(s) { var c = (STAGE[s] || STAGE.Other).c; return c === 'ink' ? 'var(--ink)' : c === 'muted' ? 'var(--muted)' : 'var(--' + c + ')' }
@@ -715,7 +761,7 @@ function stat(ic, v, lab, cls) { return '<div class="stat ' + (cls || '') + '"><
 
 /* ---------- AI team rail ---------- */
 var AGENTS = [
-  { k: 'Ava', c: '#3E63DD', job: 'docs + reminders' }, { k: 'Cleo', c: '#7C66DC', job: 'closings + loans' }, { k: 'Penny', c: '#12A594', job: 'rehab money' },
+  { k: 'Ava', c: '#128C4A', job: 'docs + reminders' }, { k: 'Cleo', c: '#0B0F0D', job: 'closings + loans' }, { k: 'Penny', c: '#22B573', job: 'rehab money' },
   { k: 'Otto', c: '', job: 'checks deals', soon: 1 }, { k: 'Scout', c: '', job: 'finds cheap houses', soon: 1 }
 ];
 function aiRail(m) {
@@ -746,7 +792,7 @@ function viewHouses() {
   var m = S.m, active = m.houses.filter(function (x) { return x.active });
   var value = active.reduce(function (s, x) { return s + (x.exit || 0) }, 0);
   var prof = active.reduce(function (s, x) { return s + (x.profit || 0) }, 0);
-  var h = '<section class="hero"><div class="row" style="flex-wrap:wrap;gap:14px"><h2 class="sec grow">Houses</h2><div class="seg"><button type="button" data-view="board" aria-pressed="' + (S.view === 'board') + '">' + ico('board', 14) + ' Board</button><button type="button" data-view="list" aria-pressed="' + (S.view === 'list') + '">' + ico('list', 14) + ' List</button></div></div>' +
+  var h = '<section class="hero"><div class="row" style="flex-wrap:wrap;gap:14px"><h2 class="sec grow">Houses</h2><button class="btn go" type="button" data-open="act:addHouse" style="padding:8px 14px">+ Add a house</button><div class="seg"><button type="button" data-view="board" aria-pressed="' + (S.view === 'board') + '">' + ico('board', 14) + ' Board</button><button type="button" data-view="list" aria-pressed="' + (S.view === 'list') + '">' + ico('list', 14) + ' List</button></div></div>' +
     '<div class="statrow">' + stat('home', active.length, 'Active houses') + stat('tag', kmoney(value), 'Worth when fixed') + stat('trend', kmoney(prof), 'Expected profit') + stat('clock', avgDays(active) + 'd', 'Avg. days owned') + '</div></section>';
   if (!m.P) return h + '<p class="empty">No Properties tab found in GPS Command.</p>';
   if (S.view === 'list') {
@@ -779,7 +825,7 @@ function houseCard(x) {
 }
 
 var PACKET = ['Lease and rent amount', 'Passed the Section 8 inspection (date)', 'Lead-safe certificate', 'Registered with the city as a rental ($70)', 'Outside inspection report + photos', 'No unpaid water or tax bills on it', 'Property manager lined up', 'Before and after photos'];
-function openHouse(i) {
+function openHouse(i, keep) {
   var m = S.m, x = m.houses[i]; if (!x) return;
   var packet = store('packet.' + norm(x.addr)) || [];
   var h = '<div class="shell"><div class="top"><button type="button" class="btn" data-close>' + ico('back', 16) + 'Back</button><span class="sp"></span><span class="chip k" style="background:' + stageSoft(x.stage) + ';color:' + stageColor(x.stage) + '">' + esc(stageName(x.stage)) + '</span></div>';
@@ -798,6 +844,7 @@ function openHouse(i) {
   h += '<a class="btn" target="_blank" rel="noopener" href="https://myplace.cuyahogacounty.gov/">' + ico('bank', 15) + 'County record</a>';
   h += '<button class="btn" type="button" data-estimate="' + i + '">' + ico('hammer', 15) + 'Price the fix-up</button>';
   h += '<a class="btn dark" target="_blank" rel="noopener" href="' + claudeLink('About ' + x.addr + ': where are we on this house? Check GPS Command, the Rehab Ledger and the house folder, and tell me what is spent, what is left, what is missing for closing and what I should do next.') + '">' + ico('spark', 15) + 'Ask Claude</a></div>';
+  h += editHouseHtml(x);
   h += '<div class="grid two" style="margin-top:14px">';
   if (m.p.header('status')) h += '<div class="card"><div class="ch">' + ico('check') + '<h3>Where is it at?</h3></div><div class="search"><select id="newstatus" class="sel grow">' +
     ['Buying', 'Rehab', 'Listed', 'Under contract', 'Refi', 'Held', 'Sold'].map(function (s) { return '<option value="' + s + '"' + (x.stage === s ? ' selected' : '') + '>' + stageName(s) + '</option>' }).join('') +
@@ -807,7 +854,7 @@ function openHouse(i) {
   }).join('') + '<a class="btn full" style="margin-top:10px" target="_blank" rel="noopener" href="' + claudeLink('Build the investor packet for ' + x.addr + ' from its Drive folder: one page with photos, work done, rent, CMHA status, lead safe cert, rental registration, price and return. List anything missing.') + '">Have Cleo put the pack together</a><p class="xs muted" style="margin:8px 0 0">Out-of-state buyers pay full price faster when this is complete.</p></div></div>';
   h += '<div class="card scroll" style="margin-top:14px"><div class="ch">' + ico('wallet') + '<h3>Money on this house</h3><span class="sp"></span><span class="chip k n">' + x.lines.length + '</span></div>' + (x.lines.length ? '<table><tr><th>Date</th><th>Paid to</th><th class="r">Amount</th></tr>' +
     x.lines.slice().sort(function (a, b) { return (b.date || 0) - (a.date || 0) }).slice(0, 30).map(function (r) { return '<tr><td class="n xs">' + esc(r.date ? md(r.date) : '') + '</td><td>' + esc(r.payee) + (r.cat ? '<div class="xs muted">' + esc(r.cat) + '</div>' : '') + '</td><td class="r n">' + money(r.amount, true) + '</td></tr>' }).join('') + '</table>' : '<p class="empty">No payments matched to this house yet.</p>') + '</div></div>';
-  var el = $('#sheet'); el.innerHTML = h; el.hidden = false; el.scrollTop = 0; document.body.style.overflow = 'hidden';
+  var el = $('#sheet'), st = el.scrollTop; el.innerHTML = h; el.hidden = false; el.scrollTop = keep ? st : 0; document.body.style.overflow = 'hidden';
   bindSheet(i);
 }
 function kv(k, v) { return '<div><span>' + esc(k) + '</span><b class="n">' + v + '</b></div>' }
@@ -1063,6 +1110,124 @@ function bindRehab() {
   rehabCalc();
 }
 
+/* ---------- EDIT: Sam changes his own data, saved to the sheet right away ---------- */
+var STAGES = ['Buying', 'Rehab', 'Listed', 'Under contract', 'Refi', 'Held', 'Sold'];
+function openPage(title, inner, bindFn) {
+  var el = $('#sheet');
+  el.innerHTML = '<div class="shell"><div class="top"><button type="button" class="btn" data-close>' + ico('back', 16) + 'Back</button></div><h2 class="sec" style="margin:4px 0 14px">' + esc(title) + '</h2>' + inner + '</div>';
+  el.hidden = false; el.scrollTop = 0; document.body.style.overflow = 'hidden';
+  $$('[data-close]').forEach(function (b) { b.onclick = closeSheet });
+  if (bindFn) bindFn();
+}
+// Every column of one house, editable. Each change saves on its own and can be undone.
+function editHouseHtml(x) {
+  var P = S.m.P; if (!P) return '';
+  return '<div class="card" style="margin-top:14px"><div class="ch">' + ico('hammer') + '<h3>Change anything about this house</h3></div><p class="xs muted" style="margin:-6px 0 10px">Saves to your sheet as soon as you leave the box. Tap Undo if you slip.</p><div class="edits">' +
+    P.headers.map(function (hd, c) {
+      if (!String(hd).trim()) return '';
+      var v = x.row.v[c] == null ? '' : x.row.v[c], id = 'e_' + c;
+      var input = c === S.m.p.idx.status
+        ? '<select id="' + id + '" class="sel" data-edit="' + c + '">' + (STAGES.indexOf(v) < 0 ? '<option selected>' + esc(v) + '</option>' : '') + STAGES.map(function (st) { return '<option value="' + st + '"' + (v === st ? ' selected' : '') + '>' + stageName(st) + '</option>' }).join('') + '</select>'
+        : '<input id="' + id + '" data-edit="' + c + '" value="' + esc(v) + '" autocomplete="off">';
+      return '<div class="field"><label for="' + id + '">' + esc(hd) + '</label>' + input + '</div>';
+    }).join('') + '</div></div>';
+}
+function bindEditHouse(i) {
+  $$('[data-edit]').forEach(function (el) {
+    el.onchange = function () {
+      var x = S.m.houses[i], c = +el.dataset.edit, val = el.value.trim();
+      if (String(x.row.v[c] == null ? '' : x.row.v[c]) === val) return;
+      write(S.m.P.name, x.row, S.m.P.headers[c], c, val, S.m.P.headers[c] + ' saved', function () { openHouse(i, true) });
+    };
+  });
+}
+function addHouseForm() {
+  var m = S.m, P = m.P;
+  if (!P) { toast('No Properties tab found in your sheet'); return }
+  var keys = ['addr', 'status', 'pprice', 'pdate', 'budget', 'arv', 'loan', 'rate', 'lender', 'sqft', 'beds', 'baths', 'year', 'rent', 'next', 'notes'];
+  var fields = keys.filter(function (k) { return m.p.idx[k] >= 0 }).map(function (k) {
+    var hd = P.headers[m.p.idx[k]];
+    var input = k === 'status' ? '<select class="sel" data-new="' + esc(hd) + '">' + STAGES.map(function (st) { return '<option value="' + st + '"' + (st === 'Buying' ? ' selected' : '') + '>' + stageName(st) + '</option>' }).join('') + '</select>'
+      : '<input data-new="' + esc(hd) + '"' + (k === 'addr' ? ' required placeholder="1234 E 100th St, Cleveland, OH 44108"' : '') + ' autocomplete="off">';
+    return '<div class="field"><label>' + esc(hd) + (k === 'addr' ? ' (needed)' : '') + '</label>' + input + '</div>';
+  }).join('');
+  openPage('Add a house', '<div class="card"><p class="sm muted" style="margin:0 0 12px">Fill in what you know. You can change any of it later.</p><div class="edits">' + fields + '</div>' +
+    '<button class="btn go full" type="button" data-addhouse style="margin-top:14px">' + ico('check', 15) + 'Add it to my sheet</button></div>', function () {
+    $('[data-addhouse]').onclick = function () {
+      var vals = {}; $$('[data-new]').forEach(function (el) { if (el.value.trim()) vals[el.dataset.new] = el.value.trim() });
+      if (!vals[P.headers[m.p.idx.addr]]) { toast('Add the address first'); return }
+      addRowTo(P.name, P, vals, 'House added', function () { closeSheet(); go('houses') });
+    };
+  });
+}
+// Append a row: in Sam's sheet when live, in the sample otherwise.
+function addRowTo(tabName, tab, vals, okMsg, after) {
+  var b = $('[data-addhouse], [data-addlender]'); if (b) { b.disabled = true; b.textContent = 'Saving…' }
+  var finish = function () { toast(okMsg); if (after) after() };
+  if (!LIVE) {
+    if (!tab) { tab = { name: tabName, headers: Object.keys(vals), rows: [] }; S.m.raw.tabs.push(tab) }
+    tab.rows.push({ n: tab.rows.length + 2, v: tab.headers.map(function (h) { return vals[h] || '' }) });
+    S.m = buildModel(S.m.raw); finish(); return;
+  }
+  google.script.run.withSuccessHandler(function () { load(); finish() }).withFailureHandler(function (e) { if (b) { b.disabled = false; b.textContent = 'Try again' } toast(e && e.message || 'Couldn’t save') }).addRow(tabName, vals);
+}
+function lendersForm() {
+  var m = S.m, T = findTab(m.raw, /^lenders?\b|lender (list|contacts)/i);
+  var g = T ? getter(T, { name: [/^(lender|name|company)/i], contact: [/contact|first|person/i], email: [/e-?mail/i] }) : null;
+  var missing = lenderList(m).filter(function (l) { return !l.email });
+  var rows = T ? T.rows.map(function (r, k) {
+    var cell = function (key, ph) { var c = g.idx[key]; return c < 0 ? '' : '<input data-ledit="' + k + ':' + c + '" value="' + esc(r.v[c]) + '" placeholder="' + ph + '" autocomplete="off">' };
+    return '<div class="lrow">' + cell('name', 'Lender') + cell('contact', 'First name') + cell('email', 'Email') + '</div>';
+  }).join('') : '';
+  openPage('My lenders', '<div class="card"><p class="sm muted" style="margin:0 0 12px">These are who the lender emails go to. Change a box and it saves.</p>' +
+    (rows ? '<div class="lrow lh"><span>Lender</span><span>First name</span><span>Email</span></div>' + rows : '<p class="empty">No Lenders tab yet. Add your first lender below and the app makes the tab.</p>') + '</div>' +
+    '<div class="card" style="margin-top:14px"><div class="ch">' + ico('bank') + '<h3>Add a lender</h3></div>' +
+    (missing.length ? '<p class="xs muted" style="margin:-6px 0 10px">Missing an email: ' + esc(missing.map(function (l) { return l.name }).join(', ')) + '</p>' : '') +
+    '<div class="edits"><div class="field"><label>Lender</label><input data-nl="Lender" value="' + esc(missing[0] && !T ? missing[0].name : missing[0] ? missing[0].name : '') + '"></div><div class="field"><label>First name</label><input data-nl="Contact"></div><div class="field"><label>Email</label><input data-nl="Email" type="email" inputmode="email"></div></div>' +
+    '<button class="btn go full" type="button" data-addlender style="margin-top:14px">' + ico('check', 15) + 'Add lender</button></div>', function () {
+    $$('[data-ledit]').forEach(function (el) {
+      el.onchange = function () {
+        var p = el.dataset.ledit.split(':'), r = T.rows[+p[0]], c = +p[1];
+        write(T.name, r, T.headers[c], c, el.value.trim(), T.headers[c] + ' saved');
+      };
+    });
+    $('[data-addlender]').onclick = function () {
+      var v = {}; $$('[data-nl]').forEach(function (el) { if (el.value.trim()) v[el.dataset.nl] = el.value.trim() });
+      if (!v.Lender) { toast('Add the lender’s name'); return }
+      if (v.Email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.Email)) { toast('That email doesn’t look right'); return }
+      var vals = v;
+      if (T) { vals = {}; if (g.idx.name >= 0 && v.Lender) vals[T.headers[g.idx.name]] = v.Lender; if (g.idx.contact >= 0 && v.Contact) vals[T.headers[g.idx.contact]] = v.Contact; if (g.idx.email >= 0 && v.Email) vals[T.headers[g.idx.email]] = v.Email }
+      addRowTo(T ? T.name : 'Lenders', T, vals, 'Lender added', function () { lendersForm() });
+    };
+  });
+}
+function changeAppForm() {
+  var m = S.m, name = m.cfg.camName || 'Cam', phone = (m.cfg.camPhone || '').replace(/[^0-9+]/g, '');
+  openPage('Change something in this app', '<div class="card"><p class="sm" style="margin:0 0 12px">Want a button moved, a number added, or something fixed? Say it in your own words. ' + esc(name) + ' gets it as a text and makes the change.</p>' +
+    '<textarea class="mailbody" id="chgtext" rows="6" placeholder="Example: On Today, show my loan payoff dates at the top."></textarea>' +
+    '<div class="btns" style="margin-top:12px">' + (phone ? '<a class="btn go grow" id="chgsms" href="#">' + ico('send', 15) + 'Text it to ' + esc(name) + '</a>' : '') +
+    '<a class="btn grow" id="chgai" target="_blank" rel="noopener" href="#">' + ico('spark', 15) + 'Ask Claude first</a></div>' +
+    '<p class="xs muted" style="margin:10px 0 0">Your houses, money and lenders you can already change yourself: open any house and edit it.</p></div>', function () {
+    var body = function () { return 'GPS HQ change request from ' + (m.cfg.owner || 'Sam') + ': ' + $('#chgtext').value.trim() };
+    var s = $('#chgsms'); if (s) s.onclick = function () { if (!$('#chgtext').value.trim()) { toast('Type what you want changed'); return false } s.href = 'sms:' + phone + '?&body=' + encodeURIComponent(body()) };
+    $('#chgai').onclick = function () { this.href = claudeLink('I use an app called GPS HQ for my house-flipping business. I want this changed: ' + $('#chgtext').value.trim() + '. Help me describe it clearly for my developer, in 3 short bullet points.') };
+  });
+}
+// Shows what the app found in the sheet, so nothing is quietly wrong.
+function dataCheck() {
+  var m = S.m, raw = m.raw, ok = function (b) { return '<span class="chip ' + (b ? 'g' : 'o') + '">' + (b ? 'Found' : 'Missing') + '</span>' };
+  var tabs = [['Houses (Properties)', m.P, 'The app needs this. Name a tab “Properties”.'], ['Payments (Rehab Ledger)', m.L, 'Name a tab “Rehab Ledger” with Date, House, Paid To, Amount.'], ['Work Log', m.W, 'Your AI team writes here.'],
+    ['Lenders', findTab(raw, /^lenders?\b|lender (list|contacts)/i), 'Needed for lender emails: Lender, Contact, Email.'], ['Market (auto)', findTab(raw, /^market/i), 'The app makes this itself on Mondays.'], ['Price Book', m.PB, 'Optional: Hector’s real prices.']];
+  var cols = [['addr', 'Address'], ['status', 'Status'], ['pprice', 'Purchase Price'], ['pdate', 'Purchase Date'], ['budget', 'Rehab Budget'], ['arv', 'ARV or Sale Price'], ['loan', 'Loan Amount'], ['rate', 'Rate'], ['lender', 'Lender'], ['next', 'Next'],
+    ['sqft', 'Sq Ft'], ['beds', 'Beds'], ['baths', 'Baths'], ['year', 'Year Built'], ['rent', 'Rent'], ['closing', 'Closing Date']];
+  var h = '<div class="card"><div class="ch">' + ico('check') + '<h3>Tabs in your sheet</h3></div><table>' + tabs.map(function (t) { return '<tr><td><b class="sm">' + t[0] + '</b>' + (t[1] ? '<div class="xs muted">' + esc(t[1].name) + ' · ' + t[1].rows.length + ' rows</div>' : '<div class="xs muted">' + esc(t[2]) + '</div>') + '</td><td class="r">' + ok(!!t[1]) + '</td></tr>' }).join('') + '</table></div>';
+  if (m.P) h += '<div class="card" style="margin-top:14px"><div class="ch">' + ico('home') + '<h3>House columns</h3></div><p class="xs muted" style="margin:-6px 0 8px">The app reads these by name. Missing ones show as “—”. Add a column with that name to fix it.</p><table>' +
+    cols.map(function (c) { var i = m.p.idx[c[0]]; return '<tr><td class="sm">' + c[1] + '</td><td class="sm muted">' + (i >= 0 ? esc(m.P.headers[i]) : '') + '</td><td class="r">' + ok(i >= 0) + '</td></tr>' }).join('') + '</table></div>';
+  h += '<div class="card" style="margin-top:14px"><div class="kv">' + kv('Houses read', m.houses.length) + kv('Payments read', m.ledger.length) + kv('Calendar events', m.events.filter(function (e) { return !e.error }).length) + kv('Last sync', hm(new Date(raw.generatedAt || Date.now()))) + '</div>' +
+    (raw.live ? '' : '<p class="xs muted" style="margin:10px 0 0">This is the sample. On Sam’s phone it checks his real sheet.</p>') + '</div>';
+  openPage('Is my data right?', h);
+}
+
 /* ---------- HOME: every tool, grouped by what Sam is doing ---------- */
 // Each tool opens on its own page: the tab it lives on, showing only that card.
 var TOOLS = {
@@ -1085,25 +1250,26 @@ function viewHome() {
   var om = offerMath(Object.assign({}, CALC_DEFAULTS, store('calc') || {})), phone = m.cfg.camPhone || '';
   var lendDue = lg.length && !m.cfg.autoLenders && !store('lenders.' + weekKey());
   var G = [
-    { t: 'My day', all: 'today', c: 'blue', tiles: [
+    { t: 'My day', all: 'today', c: 'green', tiles: [
       { tool: 'needs', ic: 'alert', t: 'Needs you', d: n.length ? n.length + ' thing' + (n.length > 1 ? 's' : '') + ' waiting' : 'All clear', dot: n.length },
       { tool: 'route', ic: 'map', t: 'Today’s route', d: stops ? stops + ' stop' + (stops > 1 ? 's' : '') + ' today' : 'Nothing booked yet' },
       { tool: 'coming', ic: 'cal', t: 'Coming up', d: next ? md(next.start) + ': ' + next.title : 'Nothing this week' },
       { tool: 'coming', ic: 'search', t: 'Find a document', d: 'Search your Drive' }] },
-    { t: 'My houses and money', all: 'money', c: 'violet', tiles: [
+    { t: 'My houses and money', all: 'money', c: 'ink', tiles: [
       { go: 'houses', ic: 'home', t: 'All my houses', d: active.length + ' active' },
+      { act: 'addHouse', ic: 'hammer', t: 'Add a house', d: 'Saves to your sheet' },
       { tool: 'costday', ic: 'flame', t: 'Cost per day', d: money(burn) + ' today' },
       { tool: 'unsorted', ic: 'wallet', t: 'Which house was this for?', d: uns ? uns + ' payment' + (uns > 1 ? 's' : '') + ' to sort' : 'All sorted', dot: uns },
       { tool: 'budget', ic: 'hammer', t: 'Budgets', d: over ? over + ' over budget' : 'All on budget', dot: over },
       { tool: 'payments', ic: 'doc', t: 'Latest payments', d: kmoney(week) + ' this week' }] },
-    { t: 'Buying a house', all: 'deals', c: 'orange', tiles: [
+    { t: 'Buying a house', all: 'deals', c: 'green', tiles: [
       { tool: 'check', ic: 'search', t: 'Is this a good deal?', d: 'Compare to real sales' },
       { tool: 'hoods', ic: 'map', t: 'My neighborhoods', d: rows.length ? rows.length + ' ZIPs, checked Mondays' : 'Turns on at setup' },
       { tool: 'dial', ic: 'tag', t: 'Most I should offer', d: 'Right now: ' + money(om.P) },
       { tool: 'loan', ic: 'bank', t: 'Find a loan', d: 'Get quotes from lenders' },
       { tool: 'sources', ic: 'gavel', t: 'Where to find houses', d: 'Auctions, Land Bank, tax lists' },
       { tool: 'rules', ic: 'alert', t: 'City rules', d: 'Things that can cost you' }] },
-    { t: 'Fixing and selling', all: 'rehab', c: 'teal', tiles: [
+    { t: 'Fixing and selling', all: 'rehab', c: 'ink', tiles: [
       { tool: 'price', ic: 'hammer', t: 'Price a fix-up', d: '3 numbers, 1 price' },
       { tool: 'ai', ic: 'spark', t: 'AI repair estimate', d: 'Second opinion from Claude' },
       { tool: 'sell', ic: 'trend', t: 'Sell or rent?', d: 'See which pays more' },
@@ -1111,20 +1277,23 @@ function viewHome() {
     { t: 'Lenders', all: 'money', c: 'green', tiles: [
       { tool: 'lenders', ic: 'send', t: 'Lender updates', d: m.cfg.autoLenders ? 'Autopilot is on' : lendDue ? lg.length + ' to send this week' : lg.length ? 'Sent this week' : 'Add your lenders', dot: lendDue ? lg.length : 0 },
       { tool: 'loan', ic: 'bank', t: 'Ask for a loan', d: 'One email per lender' },
-      { tool: 'interest', ic: 'wallet', t: 'Loan interest', d: kmoney(interestMo) + ' a month' }] },
+      { tool: 'interest', ic: 'wallet', t: 'Loan interest', d: kmoney(interestMo) + ' a month' },
+      { act: 'lenders', ic: 'doc', t: 'My lenders', d: 'Names and emails' }] },
     { t: 'Help', c: 'ink', tiles: [
       { go: 'team', ic: 'spark', t: 'Ask my AI team', d: 'Ava, Cleo and Penny' },
+      { act: 'changeApp', ic: 'send', t: 'Change this app', d: 'Tell Cam what to fix' },
+      { act: 'dataCheck', ic: 'check', t: 'Is my data right?', d: 'What the app found' },
       phone ? { href: 'sms:' + phone.replace(/[^0-9+]/g, ''), ic: 'phone', t: 'Text ' + (m.cfg.camName || 'Cam'), d: phone } : null,
       { href: claudeLink('Give me my GPS morning briefing: new emails that need me, money that came in or went out since yesterday, and anything due this week.'), blank: 1, ic: 'cal', t: 'Morning summary', d: 'Your day in one message' }].filter(Boolean) }
   ];
-  var tone = function (c) { return c === 'ink' ? 'background:var(--soft);color:var(--ink)' : 'background:var(--' + c + '-soft);color:var(--' + c + ')' };
+
   var h = '<section class="hero"><div><h1 class="hello">Good ' + (hr < 12 ? 'morning' : hr < 17 ? 'afternoon' : 'evening') + ', ' + esc(m.cfg.owner || 'Sam') + '</h1>' +
     '<div class="date">' + (n.length ? n.length + ' thing' + (n.length > 1 ? 's' : '') + ' need you. ' : 'Nothing needs you right now. ') + 'Your houses cost ' + money(burn) + ' today. Tap anything below.</div></div></section>';
   h += G.map(function (g) {
     return '<div class="secg"><div class="sech"><h3>' + g.t + '</h3>' + (g.all ? '<button type="button" class="lnk" data-tab="' + g.all + '">See it all</button>' : '') + '</div><div class="tiles">' + g.tiles.map(function (x) {
-      var inner = (x.dot ? '<span class="dot n">' + x.dot + '</span>' : '') + '<span class="ic" style="' + tone(g.c) + '">' + ico(x.ic, 20) + '</span><b>' + esc(x.t) + '</b><small class="trunc2">' + esc(x.d) + '</small>';
+      var inner = (x.dot ? '<span class="dot n">' + x.dot + '</span>' : '') + '<span class="ic ' + (g.c === 'ink' ? 'k' : 'g') + '">' + ico(x.ic, 20) + '</span><b>' + esc(x.t) + '</b><small class="trunc2">' + esc(x.d) + '</small>';
       return x.href ? '<a class="tile" href="' + esc(x.href) + '"' + (x.blank ? ' target="_blank" rel="noopener"' : '') + '>' + inner + '</a>'
-        : '<button type="button" class="tile" data-open="' + (x.tool ? 'tool:' + x.tool : 'tab:' + x.go) + '">' + inner + '</button>';
+        : '<button type="button" class="tile" data-open="' + (x.tool ? 'tool:' + x.tool : x.act ? 'act:' + x.act : 'tab:' + x.go) + '">' + inner + '</button>';
     }).join('') + '</div></div>';
   }).join('');
   return h;
@@ -1180,12 +1349,12 @@ function lenderCard(m) {
   var h = '<div class="card" data-tool="lenders" style="margin-top:16px"><div class="ch">' + ico('send') + '<h3>Keep your lenders posted</h3><span class="sp"></span>' + (done ? '<span class="chip g">Done this week</span>' : '') + '</div>' +
     '<p class="sm muted" style="margin:-4px 0 12px">Every week the app writes each lender a short update on their houses and when they’ll get paid back.</p>' +
     '<label class="pick" style="border:0;background:var(--card2);border-radius:14px;padding:12px;margin-bottom:12px"><input type="checkbox" data-autolenders' + (m.cfg.autoLenders ? ' checked' : '') + '><span class="grow"><b class="sm">Let my AI team send these</b><br><span class="xs muted">' + (m.cfg.autoLenders ? 'On. Updates go out every Monday morning by themselves. Each one is logged.' : 'Off. Updates wait for you to read and send.') + '</span></span></label>';
-  if (!gs.length) return h + '<p class="empty">Add a Lender name to each house in your sheet and this fills in.</p></div>';
+  if (!gs.length) return h + '<p class="empty">Add a Lender name to each house in your sheet and this fills in.</p><button class="btn full" type="button" data-open="act:lenders">My lenders</button></div>';
   h += '<div class="stack">' + gs.map(function (g, i) {
     return '<div class="need" style="cursor:default"><span class="ic" style="background:var(--blue-soft);color:var(--blue)">' + ico('bank') + '</span><span class="grow"><b>' + esc(g.l.name) + '</b><span class="d">' + g.houses.length + ' house' + (g.houses.length > 1 ? 's' : '') + ' · ' + esc(g.houses.map(function (x) { return stageName(x.stage) }).join(', ')) + (g.l.email ? '' : ' · no email on file') + '</span></span>' +
       '<button class="btn" type="button" data-lupd="' + i + '" style="padding:7px 12px;font-size:13px">Write it</button></div>';
   }).join('') + '</div><button class="btn dark full" type="button" data-lupd="all" style="margin-top:12px">' + ico('send', 15) + 'Write all ' + gs.length + ' updates</button>' +
-    (gs.some(function (g) { return !g.l.email }) ? '<p class="xs muted" style="margin:8px 0 0">Add a <b>Lenders</b> tab (Lender, Contact, Email) so the emails know where to go.</p>' : '');
+    '<button class="btn full" type="button" data-open="act:lenders" style="margin-top:8px">' + ico('doc', 15) + 'My lenders' + (gs.some(function (g) { return !g.l.email }) ? ': add missing emails' : '') + '</button>';
   return h + '</div>';
 }
 function loanCard(m) {
@@ -1426,7 +1595,7 @@ function calc() {
 /* ---------- events ---------- */
 function bind() {
   $$('[data-tab]').forEach(function (b) { b.onclick = function () { go(b.dataset.tab) } });
-  $$('[data-open]').forEach(function (b) { b.onclick = function () { var v = b.dataset.open.split(':'); if (v[0] === 'tool') openTool(v[1]); else go(v[1]) } });
+  $$('[data-open]').forEach(function (b) { b.onclick = function () { var v = b.dataset.open.split(':'); if (v[0] === 'tool') openTool(v[1]); else if (v[0] === 'act') ({ addHouse: addHouseForm, lenders: lendersForm, changeApp: changeAppForm, dataCheck: dataCheck })[v[1]](); else go(v[1]) } });
   $$('[data-need]').forEach(function (b) { b.onclick = function () { var n = S.needs[+b.dataset.need]; if (n && n.tool) openTool(n.tool); else if (n && n.go) go(n.go) } });
   $$('[data-house]').forEach(function (b) { b.onclick = function () { openHouse(+b.dataset.house) } });
   $$('[data-view]').forEach(function (b) { b.onclick = function () { S.view = b.dataset.view; store('view', S.view); render() } });
@@ -1464,6 +1633,7 @@ function bind() {
   };
 }
 function bindSheet(i) {
+  bindEditHouse(i);
   $$('[data-close]').forEach(function (b) { b.onclick = closeSheet });
   $$('[data-packet]').forEach(function (cb) { cb.onchange = function () {
     var key = 'packet.' + cb.dataset.houseKey, cur = store(key) || [], k = +cb.dataset.packet;
@@ -1476,9 +1646,9 @@ function bindSheet(i) {
     write(S.m.P.name, x.row, S.m.p.header('status'), S.m.p.idx.status, val, 'Status saved', function () { openHouse(i) });
   };
 }
-function write(tab, row, header, colI, value, okMsg, after) {
+function write(tab, row, header, colI, value, okMsg, after, isUndo) {
   var old = row.v[colI];
-  var done = function () { row.v[colI] = value; S.m = buildModel(S.m.raw); toast(okMsg); render(); if (after) after() };
+  var done = function () { row.v[colI] = value; S.m = buildModel(S.m.raw); toast(okMsg, isUndo ? null : { label: 'Undo', fn: function () { write(tab, row, header, colI, old, 'Changed back', after, true) } }); render(); if (after) after() };
   if (!LIVE) { done(); return }
   toast('Saving…');
   google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { toast(e && e.message || 'Couldn’t save') }).setCell(tab, row.n, header, value, old);
