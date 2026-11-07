@@ -242,6 +242,24 @@ td.r, th.r { text-align: right }
 .mailsubj { width: 100%; margin-top: 8px; border: 1.5px solid var(--line); background: var(--card2); border-radius: 12px; padding: 10px 12px; font-weight: 700 }
 .mailbody { width: 100%; margin-top: 8px; border: 1.5px solid var(--line); background: var(--card2); border-radius: 12px; padding: 12px; font: 500 14px/1.5 var(--font); color: var(--ink); resize: vertical }
 .mailsubj:focus, .mailbody:focus { border-color: var(--blue); outline: 0 }
+.secg { margin-top: 22px }
+.sech { display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px 10px }
+.sech h3 { margin: 0; font-size: 17px; font-weight: 800 }
+.lnk { border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 13px; cursor: pointer; padding: 4px }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+@media (min-width: 760px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)) } }
+@media (min-width: 1080px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)) } }
+.tile { position: relative; display: grid; gap: 8px; align-content: start; text-align: left; background: var(--card); border: 0; border-radius: 20px; padding: 14px; box-shadow: var(--shadow); cursor: pointer; text-decoration: none; color: var(--ink); min-height: 124px; font: inherit }
+.tile:active { transform: scale(.98) }
+.tile .ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center }
+.tile b { font-size: 15px; font-weight: 800; line-height: 1.2 }
+.tile small { font-size: 12.5px; color: var(--muted); line-height: 1.3 }
+.trunc2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.tile .dot { position: absolute; top: 12px; right: 12px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--orange); color: #fff; font-size: 11.5px; font-weight: 800; display: grid; place-items: center }
+.toolhead { display: flex; align-items: center; gap: 12px; margin: 4px 0 16px; flex-wrap: wrap }
+.toolhead h2 { font-size: 24px }
+.focus .hero:not([data-keep]) { display: none }
+.focus .grid { grid-template-columns: minmax(0, 1fr) !important }
 .zlist { display: grid; gap: 8px }
 @media (min-width: 900px) { .zlist { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
 .zrow { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: var(--card2); border: 0; width: 100%; text-align: left; cursor: pointer; color: var(--ink) }
@@ -548,8 +566,8 @@ function buildModel(raw) {
 }
 
 /* ---------- state + shell ---------- */
-var S = { m: null, tab: (/^#(today|houses|rehab|money|deals)$/.test(location.hash) ? location.hash.slice(1) : 'today'), view: store('view') || 'board', range: 12, rk: store('rk') || 'new' };
-var TABS = [{ id: 'today', name: 'Today', ic: 'pin' }, { id: 'houses', name: 'Houses', ic: 'home' }, { id: 'rehab', name: 'Rehab', ic: 'hammer' }, { id: 'money', name: 'Money', ic: 'wallet' }, { id: 'deals', name: 'Deals', ic: 'trend' }];
+var S = { m: null, tool: null, tab: (/^#(home|today|houses|rehab|money|deals|team)$/.test(location.hash) ? location.hash.slice(1) : 'home'), view: store('view') || 'board', range: 12, rk: store('rk') || 'new' };
+var TABS = [{ id: 'home', name: 'Home', ic: 'board' }, { id: 'today', name: 'Today', ic: 'pin' }, { id: 'houses', name: 'Houses', ic: 'home' }, { id: 'money', name: 'Money', ic: 'wallet' }, { id: 'team', name: 'Team', ic: 'spark' }];
 var todayKey = function () { return 'route.' + startOfDay(new Date()).toISOString().slice(0, 10) };
 
 function load() {
@@ -566,12 +584,12 @@ function set(raw) {
   $('#sync').textContent = (raw.live ? 'Synced ' : 'Sample · ') + hm(new Date(raw.generatedAt || Date.now()));
   render();
 }
-function go(tab) { S.tab = tab; closeSheet(); render(); window.scrollTo(0, 0) }
+function go(tab) { S.tab = tab; S.tool = null; closeSheet(); render(); window.scrollTo(0, 0) }
 function navHtml(cls) {
   var n = needs(S.m).length;
   return TABS.map(function (t) {
-    var c = t.id === 'today' && n ? '<span class="cnt n">' + n + '</span>' : '';
-    return '<button type="button" data-tab="' + t.id + '" aria-current="' + (S.tab === t.id ? 'page' : 'false') + '">' + (cls === 'bar' ? ico(t.ic, 20) : '') + t.name + c + '</button>';
+    var c = t.id === 'home' && n ? '<span class="cnt n">' + n + '</span>' : '', cur = S.tool ? t.id === 'home' : S.tab === t.id;
+    return '<button type="button" data-tab="' + t.id + '" aria-current="' + (cur ? 'page' : 'false') + '">' + (cls === 'bar' ? ico(t.ic, 20) : '') + t.name + c + '</button>';
   }).join('');
 }
 function render() {
@@ -579,10 +597,13 @@ function render() {
   $('#nav').innerHTML = navHtml('top');
   $('#tabbar').innerHTML = navHtml('bar');
   $('#bellct').hidden = !n; $('#bellct').textContent = n;
-  var body = { today: viewToday, houses: viewHouses, rehab: viewRehab, money: viewMoney, deals: viewDeals }[S.tab]();
+  var body = { home: viewHome, today: viewToday, houses: viewHouses, rehab: viewRehab, money: viewMoney, deals: viewDeals, team: viewTeam }[S.tab]();
+  if (S.tool) body = '<div class="toolhead"><button type="button" class="btn" data-tab="home">' + ico('back', 16) + 'Home</button><h2 class="sec">' + esc(TOOLS[S.tool].t) + '</h2></div><div class="focus">' + body + '</div>';
   var demo = m.raw.live ? '' : '<div class="demo">' + ico('spark', 16) + '<span>Sample data. On Sam’s phone this reads his real GPS Command sheet, calendar and Drive.</span></div>';
-  var rail = S.tab === 'today' || window.innerWidth >= 1080 ? '<aside class="rail">' + aiRail(m) + '</aside>' : '';
+  var rail = S.tab !== 'team' && ((S.tab === 'today' && !S.tool) || window.innerWidth >= 1080) ? '<aside class="rail">' + aiRail(m) + '</aside>' : '';
   $('#app').innerHTML = demo + '<div class="cols"><div class="view">' + body + '</div>' + rail + '</div>';
+  // One tool at a time: hide every card that isn't part of it.
+  if (S.tool) $$('.focus .card, .focus [data-tool], .focus .grid').forEach(function (el) { var t = el.closest('[data-tool]'); if (el.classList.contains('grid') && !t) { el.hidden = !el.querySelector('[data-tool="' + S.tool + '"]'); return } el.hidden = !t || t.dataset.tool !== S.tool });
   bind();
 }
 
@@ -590,7 +611,7 @@ function render() {
 function needs(m) {
   var out = [];
   var uns = m.ledger.filter(function (x) { return x.unsorted });
-  if (uns.length) out.push({ cls: 'o', ic: 'wallet', t: uns.length + ' payment' + (uns.length > 1 ? 's' : '') + ' need a house', d: money(uns.reduce(function (s, x) { return s + x.amount }, 0)) + ' with no house on it. Tap to say which house.', go: 'money' });
+  if (uns.length) out.push({ cls: 'o', ic: 'wallet', t: uns.length + ' payment' + (uns.length > 1 ? 's' : '') + ' need a house', d: money(uns.reduce(function (s, x) { return s + x.amount }, 0)) + ' with no house on it. Tap to say which house.', tool: 'unsorted' });
   m.events.filter(function (e) { return e.start - m.now < 2 * DAY && e.start - startOfDay(m.now) >= 0 && /wire|verify|fraud|new account/i.test(e.title + ' ' + e.note) })
     .forEach(function (e) { out.push({ cls: 'r', ic: 'alert', t: e.title, d: 'Before you send money, call them on a number you already know · ' + dayName(e.start) }) });
   var over = m.houses.filter(function (h) { return h.active && h.pct != null && h.pct > 1 });
@@ -600,7 +621,7 @@ function needs(m) {
   var conf = m.houses.filter(function (h) { return h.confirm });
   if (conf.length) out.push({ cls: '', ic: 'check', t: 'Check ' + conf.length + ' house' + (conf.length > 1 ? 's' : ''), d: 'We filled in where these are at. Tap and say if it’s right.', go: 'houses' });
   var lg = lenderGroups(m);
-  if (lg.length && !m.cfg.autoLenders && !store('lenders.' + weekKey())) out.push({ cls: 'b', ic: 'send', t: 'Send your lenders this week’s update', d: lg.length + ' lender' + (lg.length > 1 ? 's' : '') + '. The emails are written; you just read and send.', go: 'money' });
+  if (lg.length && !m.cfg.autoLenders && !store('lenders.' + weekKey())) out.push({ cls: 'b', ic: 'send', t: 'Send your lenders this week’s update', d: lg.length + ' lender' + (lg.length > 1 ? 's' : '') + '. The emails are written; you just read and send.', tool: 'lenders' });
   var nob = m.houses.filter(function (h) { return h.stage === 'Rehab' && !h.budget });
   if (nob.length) out.push({ cls: '', ic: 'hammer', t: nob.length + ' house' + (nob.length > 1 ? 's' : '') + ' being fixed with no budget', d: 'Without one, Penny can’t warn you before a job runs over.', go: 'houses' });
   return out;
@@ -651,8 +672,8 @@ function viewToday() {
 
   h += '<div class="grid two">';
   // needs
-  h += '<div class="card"><div class="ch">' + ico('alert') + '<h3>Needs you</h3>' + (n.length ? '<span class="cnt n">' + n.length + '</span>' : '') + '</div>' +
-    (n.length ? '<div class="stack">' + n.map(function (x, i) { return '<button type="button" class="need ' + x.cls + '" data-need="' + i + '"><span class="ic">' + ico(x.ic) + '</span><span class="grow"><b>' + esc(x.t) + '</b><span class="d">' + esc(x.d) + '</span></span>' + (x.go ? ico('chev', 16) : '') + '</button>' }).join('') + '</div>'
+  h += '<div class="card" data-tool="needs"><div class="ch">' + ico('alert') + '<h3>Needs you</h3>' + (n.length ? '<span class="cnt n">' + n.length + '</span>' : '') + '</div>' +
+    (n.length ? '<div class="stack">' + n.map(function (x, i) { return '<button type="button" class="need ' + x.cls + '" data-need="' + i + '"><span class="ic">' + ico(x.ic) + '</span><span class="grow"><b>' + esc(x.t) + '</b><span class="d">' + esc(x.d) + '</span></span>' + (x.go || x.tool ? ico('chev', 16) : '') + '</button>' }).join('') + '</div>'
       : '<p class="empty">Nothing waiting on you. Your agents have it.</p>') + '</div>';
   // route
   var todays = m.events.filter(function (e) { return sameDay(e.start, now) && !e.error });
@@ -662,7 +683,7 @@ function viewToday() {
   var mapStops = stops.map(function (s) { return s.h ? s.h.addr : (s.e.location || (s.e.house && s.e.house.addr)) }).filter(Boolean);
   var routeUrl = mapStops.length ? 'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' + encodeURIComponent(mapsQuery(mapStops[mapStops.length - 1])) +
     (mapStops.length > 1 ? '&waypoints=' + encodeURIComponent(mapStops.slice(0, -1).map(mapsQuery).join('|')) : '') : null;
-  h += '<div class="card"><div class="ch">' + ico('map') + '<h3>Today’s route</h3><span class="sp"></span>' + (routeUrl ? '<a class="btn dark" style="padding:7px 12px;font-size:13px" target="_blank" rel="noopener" href="' + esc(routeUrl) + '">' + ico('send', 15) + 'Drive · ' + mapStops.length + '</a>' : '') + '</div>';
+  h += '<div class="card" data-tool="route"><div class="ch">' + ico('map') + '<h3>Today’s route</h3><span class="sp"></span>' + (routeUrl ? '<a class="btn dark" style="padding:7px 12px;font-size:13px" target="_blank" rel="noopener" href="' + esc(routeUrl) + '">' + ico('send', 15) + 'Drive · ' + mapStops.length + '</a>' : '') + '</div>';
   if (stops.length) {
     h += '<div class="route">' + stops.map(function (s) {
       if (s.h) return '<div class="stop walk"><div class="t">WALK</div><div class="ttl">' + esc(s.h.addr) + '</div><div class="loc">' + esc(stageName(s.h.stage)) + (s.h.days != null ? ' · owned ' + s.h.days + ' days' : '') + (s.h.next ? ' · ' + esc(s.h.next) : '') + '</div></div>';
@@ -678,11 +699,11 @@ function viewToday() {
 
   // chart + upcoming
   var c = spendChart(m, S.range);
-  h += '<div class="grid two" style="margin-top:16px"><div class="card chart"><div class="ch">' + ico('trend') + '<h3>Spent fixing houses</h3><span class="sp"></span><div class="seg"><button type="button" data-range="6" aria-pressed="' + (S.range === 6) + '">6 wks</button><button type="button" data-range="12" aria-pressed="' + (S.range === 12) + '">12 wks</button></div></div>' +
+  h += '<div class="grid two" style="margin-top:16px"><div class="card chart" data-tool="spend"><div class="ch">' + ico('trend') + '<h3>Spent fixing houses</h3><span class="sp"></span><div class="seg"><button type="button" data-range="6" aria-pressed="' + (S.range === 6) + '">6 wks</button><button type="button" data-range="12" aria-pressed="' + (S.range === 12) + '">12 wks</button></div></div>' +
     '<div class="row" style="align-items:baseline;flex-wrap:wrap"><span class="big n">' + money(c.total) + '</span><span class="muted sm">last ' + S.range + ' weeks · ' + kmoney(c.last) + ' this week</span></div>' +
     '<div class="legend"><span><i></i>Spent each week</span><span><i class="dash"></i>Average ' + kmoney(c.avg) + ' / wk</span></div>' + c.svg + '</div>';
   var later = m.events.filter(function (e) { return startOfDay(e.start) > startOfDay(now) && !e.error }).slice(0, 6);
-  h += '<div class="card"><div class="ch">' + ico('cal') + '<h3>Coming up</h3></div>' + (later.length ? '<div class="stack">' + later.map(function (e) {
+  h += '<div class="card" data-tool="coming"><div class="ch">' + ico('cal') + '<h3>Coming up</h3></div>' + (later.length ? '<div class="stack">' + later.map(function (e) {
     return '<div class="row"><div style="width:46px;text-align:center;flex:none;background:var(--card2);border-radius:12px;padding:6px 0"><div class="xs muted">' + esc(e.start.toLocaleDateString('en-US', { weekday: 'short' })) + '</div><b style="font-size:17px">' + e.start.getDate() + '</b></div><div class="grow"><b class="trunc" style="display:block">' + esc(e.title) + '</b><span class="xs muted">' + (e.allDay ? 'All day' : esc(hm(e.start))) + (e.location ? ' · ' + esc(e.location) : '') + '</span></div></div>';
   }).join('') + '</div>' : '<p class="empty">Nothing on the calendar this week.</p>');
   var calErr = m.events.filter(function (e) { return e.error })[0];
@@ -802,9 +823,9 @@ function viewMoney() {
   var uns = m.ledger.filter(function (x) { return x.unsorted });
   var mSum = m.ledger.filter(function (x) { return x.date && x.date.getMonth() === now.getMonth() && x.date.getFullYear() === now.getFullYear() }).reduce(function (s, x) { return s + x.amount }, 0);
   var h = '<section class="hero"><h2 class="sec">Money</h2><div class="statrow">' + stat('flame', money(burn), 'Cost per day', 'hot') + stat('bank', kmoney(interestMo), 'Interest / month') + stat('wallet', kmoney(mSum), 'Spent this month') + stat('alert', uns.length, 'No house yet') + '</div></section>';
-  h += '<div class="card" style="background:var(--pill);color:var(--pill-ink)"><div class="row" style="flex-wrap:wrap;gap:14px"><span class="ic" style="width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center">' + ico('flame', 20) + '</span><div class="grow"><div style="font-weight:800;font-size:17px">Finish every fix-up one week sooner and keep ' + money(burn * 7) + '</div><div class="sm" style="opacity:.7">Each of your ' + owned.length + ' houses costs about ' + money(burn / Math.max(1, owned.length)) + ' a day in interest, taxes, insurance and utilities.</div></div></div></div>';
+  h += '<div class="card" data-tool="costday" style="background:var(--pill);color:var(--pill-ink)"><div class="row" style="flex-wrap:wrap;gap:14px"><span class="ic" style="width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center">' + ico('flame', 20) + '</span><div class="grow"><div style="font-weight:800;font-size:17px">Finish every fix-up one week sooner and keep ' + money(burn * 7) + '</div><div class="sm" style="opacity:.7">Each of your ' + owned.length + ' houses costs about ' + money(burn / Math.max(1, owned.length)) + ' a day in interest, taxes, insurance and utilities.</div></div></div></div>';
   h += lenderCard(m);
-  h += '<div class="grid two" style="margin-top:16px"><div class="card"><div class="ch">' + ico('alert') + '<h3>Which house was this for?</h3>' + (uns.length ? '<span class="cnt n">' + uns.length + '</span>' : '') + '</div>';
+  h += '<div class="grid two" style="margin-top:16px"><div class="card" data-tool="unsorted"><div class="ch">' + ico('alert') + '<h3>Which house was this for?</h3>' + (uns.length ? '<span class="cnt n">' + uns.length + '</span>' : '') + '</div>';
   if (uns.length) {
     var opts = active.map(function (x) { return '<option>' + esc(x.addr) + '</option>' }).join('');
     h += '<div class="stack">' + uns.map(function (u) {
@@ -815,16 +836,16 @@ function viewMoney() {
   } else h += '<p class="empty">Every payment is matched to a house.</p>';
   h += '</div>';
   var rows = active.filter(function (x) { return x.budget || x.spent });
-  h += '<div class="card"><div class="ch">' + ico('hammer') + '<h3>Budget vs spent</h3></div>' + (rows.length ? '<div class="stack">' + rows.map(function (x) {
+  h += '<div class="card" data-tool="budget"><div class="ch">' + ico('hammer') + '<h3>Budget vs spent</h3></div>' + (rows.length ? '<div class="stack">' + rows.map(function (x) {
     var left = x.budget ? x.budget - x.spent : null, cls = x.pct == null ? '' : x.pct > 1 ? 'x' : x.pct > .9 ? 'w' : '';
     return '<div><div class="row"><b class="grow trunc sm">' + esc(x.addr) + '</b><span class="xs n ' + (left < 0 ? 'neg' : 'muted') + '">' + (left == null ? 'no budget' : (left < 0 ? kmoney(-left) + ' over' : kmoney(left) + ' left')) + '</span></div><div class="bar ' + cls + '" style="margin-top:6px"><i style="width:' + Math.min(100, Math.round((x.pct || 0) * 100)) + '%"></i></div></div>';
   }).join('') + '</div>' : '<p class="empty">No budgets yet. Send Penny one and this fills in.</p>') + '</div></div>';
   var loans = active.filter(function (x) { return x.interestDay });
   h += '<div class="grid two" style="margin-top:16px">';
-  h += '<div class="card scroll"><div class="ch">' + ico('bank') + '<h3>Loan interest</h3></div>' + (loans.length ? '<table><tr><th>House</th><th>Lender</th><th class="r">/ month</th></tr>' + loans.map(function (x) { return '<tr><td>' + esc(x.addr) + '</td><td class="sm muted">' + esc(x.lender || '') + '</td><td class="r n">' + money(x.interestDay * 30.4) + '</td></tr>' }).join('') + '</table>' : '<p class="empty">Add each house’s loan amount and rate to your sheet to see this.</p>') +
+  h += '<div class="card scroll" data-tool="interest"><div class="ch">' + ico('bank') + '<h3>Loan interest</h3></div>' + (loans.length ? '<table><tr><th>House</th><th>Lender</th><th class="r">/ month</th></tr>' + loans.map(function (x) { return '<tr><td>' + esc(x.addr) + '</td><td class="sm muted">' + esc(x.lender || '') + '</td><td class="r n">' + money(x.interestDay * 30.4) + '</td></tr>' }).join('') + '</table>' : '<p class="empty">Add each house’s loan amount and rate to your sheet to see this.</p>') +
     '<div class="alert r" style="margin-top:12px">' + ico('alert', 16) + '<span>If a lender ever asks you to pay into a new bank account, call them first on a number you already know. It’s a common scam.</span></div></div>';
   var recent = m.ledger.filter(function (x) { return !x.unsorted }).sort(function (a, b) { return (b.date || 0) - (a.date || 0) }).slice(0, 10);
-  h += '<div class="card scroll"><div class="ch">' + ico('wallet') + '<h3>Latest payments</h3></div>' + (recent.length ? '<table>' + recent.map(function (r) { return '<tr><td class="n xs" style="width:52px">' + esc(r.date ? md(r.date) : '') + '</td><td><b class="sm">' + esc(r.payee) + '</b><div class="xs muted">' + esc(r.house) + '</div></td><td class="r n">' + money(r.amount, true) + '</td></tr>' }).join('') + '</table>' : '<p class="empty">No payments logged yet.</p>') + '</div></div>';
+  h += '<div class="card scroll" data-tool="payments"><div class="ch">' + ico('wallet') + '<h3>Latest payments</h3></div>' + (recent.length ? '<table>' + recent.map(function (r) { return '<tr><td class="n xs" style="width:52px">' + esc(r.date ? md(r.date) : '') + '</td><td><b class="sm">' + esc(r.payee) + '</b><div class="xs muted">' + esc(r.house) + '</div></td><td class="r n">' + money(r.amount, true) + '</td></tr>' }).join('') + '</table>' : '<p class="empty">No payments logged yet.</p>') + '</div></div>';
   return h;
 }
 
@@ -927,10 +948,10 @@ function viewRehab() {
   }).join('');
   var f = function (attr, id, label, v, step) { return '<div class="field"><label for="r_' + id + '">' + label + '</label><input id="r_' + id + '" ' + attr + '="' + id + '" type="number" inputmode="decimal" step="' + (step || 'any') + '" value="' + esc(v) + '"></div>' };
 
-  var h = '<section class="hero"><div class="row" style="flex-wrap:wrap;gap:12px;align-items:flex-end"><div class="grow" style="min-width:200px"><h2 class="sec">Rehab</h2><div class="date" style="margin-top:4px">How much to fix it up?</div></div>' +
+  var h = '<section class="hero" data-keep><div class="row" style="flex-wrap:wrap;gap:12px;align-items:flex-end"><div class="grow" style="min-width:200px"><h2 class="sec">Rehab</h2><div class="date" style="margin-top:4px">How much to fix it up?</div></div>' +
     '<select id="rhouse" class="sel" style="width:auto;max-width:100%" aria-label="Which house"><option value="new">A new house</option>' + opts + '</select></div></section>';
 
-  h += '<div class="grid two"><div class="card"><div class="g2 three">' +
+  h += '<div class="grid two" data-tool="price"><div class="card"><div class="g2 three">' +
     f('data-rlay', 'sqft', 'Square feet', L.sqft, '50') + f('data-rlay', 'beds', 'Bedrooms', L.beds, '1') + f('data-rlay', 'baths', 'Bathrooms', L.baths, '0.5') + '</div>' +
     '<label class="pick" style="margin-top:6px"><input type="checkbox" data-rold' + (+L.year < 1978 ? ' checked' : '') + '><span class="grow sm">Built before 1978 (needs lead-safe work)</span></label>' +
     '<div class="xs muted" style="margin:12px 0 8px;font-weight:600">How rough is it?</div><div class="conds">' + CONDS.map(function (c, i) {
@@ -943,17 +964,17 @@ function viewRehab() {
     '<a class="btn" id="rsms" href="#">' + ico('send', 15) + 'Text to contractor</a>' +
     (x && m.p.header('budget') ? '<button class="btn" type="button" data-rbudget>' + ico('check', 15) + 'Save as budget</button>' : '') + '</div></div></div>';
 
-  h += '<details class="card" style="margin-top:16px"><summary>' + ico('list', 16) + '<span class="grow">What’s in this price</span><span class="chip k n" id="s_n"></span>' + ico('chev', 16) + '</summary>' +
+  h += '<details class="card" data-tool="price" style="margin-top:16px"><summary>' + ico('list', 16) + '<span class="grow">What’s in this price</span><span class="chip k n" id="s_n"></span>' + ico('chev', 16) + '</summary>' +
     '<div class="row" style="margin-top:12px;flex-wrap:wrap"><span class="xs muted grow">Tick or untick anything. Prices are starting numbers for Cleveland.</span>' +
     '<button class="btn" type="button" data-redit style="padding:6px 12px;font-size:12.5px">Change numbers</button><button class="btn" type="button" data-rreset style="padding:6px 12px;font-size:12.5px">Reset</button></div>' +
     '<div class="scope" id="scope">' + GROUPS.map(function (g, gi) {
       return '<div class="rg"><div class="rgh"><i style="background:' + gcol(g) + '"></i>' + esc(g.k) + '<span class="n" id="rg_' + gi + '"></span></div>' + ITEMS.filter(function (it) { return it.g === g.k }).map(rline).join('') + '</div>';
     }).join('') + '</div></details>';
 
-  h += '<div class="grid two" style="margin-top:16px"><div class="card"><div class="ch">' + ico('trend') + '<h3>Sell it or rent it?</h3></div><div class="g2 three">' +
+  h += '<div class="grid two" style="margin-top:16px"><div class="card" data-tool="sell"><div class="ch">' + ico('trend') + '<h3>Sell it or rent it?</h3></div><div class="g2 three">' +
     f('data-x', 'arv', 'Sells for', X.arv) + f('data-x', 'rent', 'Rent / month', X.rent) + f('data-x', 'pprice', 'You paid', X.pprice) +
     '</div><div id="exitout" style="margin-top:14px"></div></div>';
-  h += '<div class="card"><div class="ch">' + ico('spark') + '<h3>Ask AI for a second opinion</h3></div>' +
+  h += '<div class="card" data-tool="ai"><div class="ch">' + ico('spark') + '<h3>Ask AI for a second opinion</h3></div>' +
     '<p class="sm" style="margin:0 0 12px">Claude looks up today’s Cleveland prices and gives you a low, likely and high number for this house. Paste the Zillow or Redfin link and it reads the listing too.</p>' +
     '<div class="field"><label for="r_link">Listing link (optional)</label><input id="r_link" data-rlink type="url" placeholder="https://www.zillow.com/…" value="' + esc(e.link || '') + '"></div>' +
     '<a class="btn dark full" id="rai" target="_blank" rel="noopener" href="#" style="margin-top:10px">' + ico('spark', 15) + 'Get an AI repair estimate</a>' +
@@ -1032,7 +1053,7 @@ function bindRehab() {
     var c = Object.assign({}, CALC_DEFAULTS, store('calc') || {});
     c.rehab = Math.round(T.grand / 500) * 500; c.sale = X.arv || c.sale; c.rent = X.rent || c.rent; c.months = X.months || c.months;
     var x = rehabHouse(); if ((!x || x.stage === 'Buying') && X.pprice) c.ask = X.pprice;
-    store('calc', c); go('deals'); toast('Fix-up cost ' + money(c.rehab) + ' added to your offer');
+    store('calc', c); openTool('dial'); toast('Fix-up cost ' + money(c.rehab) + ' added to your offer');
   };
   var bu = $('[data-rbudget]'); if (bu) bu.onclick = function () {
     var x = rehabHouse(), v = estTotals().grand;
@@ -1041,6 +1062,74 @@ function bindRehab() {
   };
   rehabCalc();
 }
+
+/* ---------- HOME: every tool, grouped by what Sam is doing ---------- */
+// Each tool opens on its own page: the tab it lives on, showing only that card.
+var TOOLS = {
+  needs: { tab: 'today', t: 'Needs you' }, route: { tab: 'today', t: 'Today’s route' }, coming: { tab: 'today', t: 'Coming up and documents' }, spend: { tab: 'today', t: 'Spent fixing houses' },
+  costday: { tab: 'money', t: 'Cost per day' }, unsorted: { tab: 'money', t: 'Which house was this for?' }, budget: { tab: 'money', t: 'Budgets' }, payments: { tab: 'money', t: 'Latest payments' },
+  lenders: { tab: 'money', t: 'Lender updates' }, interest: { tab: 'money', t: 'Loan interest' },
+  check: { tab: 'deals', t: 'Is this a good deal?' }, hoods: { tab: 'deals', t: 'My neighborhoods' }, dial: { tab: 'deals', t: 'Most I should offer' }, loan: { tab: 'deals', t: 'Find a loan' },
+  sources: { tab: 'deals', t: 'Where to find houses' }, rules: { tab: 'deals', t: 'City rules that cost money' }, buyer: { tab: 'deals', t: 'What a buyer will pay' },
+  price: { tab: 'rehab', t: 'Price a fix-up' }, ai: { tab: 'rehab', t: 'AI repair estimate' }, sell: { tab: 'rehab', t: 'Sell or rent?' }
+};
+function openTool(id) { if (!TOOLS[id]) return; S.tool = id; S.tab = TOOLS[id].tab; closeSheet(); render(); window.scrollTo(0, 0) }
+function viewHome() {
+  var m = S.m, now = m.now, hr = now.getHours(), n = needs(m); S.needs = n;
+  var active = m.houses.filter(function (x) { return x.active }), burn = active.reduce(function (s, x) { return s + x.perDay }, 0);
+  var uns = m.ledger.filter(function (x) { return x.unsorted }).length, over = active.filter(function (x) { return x.pct != null && x.pct > 1 }).length;
+  var week = m.ledger.filter(function (x) { return x.date && now - x.date < 7 * DAY }).reduce(function (s, x) { return s + x.amount }, 0);
+  var stops = m.events.filter(function (e) { return sameDay(e.start, now) && !e.error }).length + (store(todayKey()) || []).length;
+  var next = m.events.filter(function (e) { return e.start > now && !e.error })[0], rows = marketRows(m), lg = lenderGroups(m);
+  var interestMo = active.reduce(function (s, x) { return s + x.interestDay * 30.4 }, 0);
+  var om = offerMath(Object.assign({}, CALC_DEFAULTS, store('calc') || {})), phone = m.cfg.camPhone || '';
+  var lendDue = lg.length && !m.cfg.autoLenders && !store('lenders.' + weekKey());
+  var G = [
+    { t: 'My day', all: 'today', c: 'blue', tiles: [
+      { tool: 'needs', ic: 'alert', t: 'Needs you', d: n.length ? n.length + ' thing' + (n.length > 1 ? 's' : '') + ' waiting' : 'All clear', dot: n.length },
+      { tool: 'route', ic: 'map', t: 'Today’s route', d: stops ? stops + ' stop' + (stops > 1 ? 's' : '') + ' today' : 'Nothing booked yet' },
+      { tool: 'coming', ic: 'cal', t: 'Coming up', d: next ? md(next.start) + ': ' + next.title : 'Nothing this week' },
+      { tool: 'coming', ic: 'search', t: 'Find a document', d: 'Search your Drive' }] },
+    { t: 'My houses and money', all: 'money', c: 'violet', tiles: [
+      { go: 'houses', ic: 'home', t: 'All my houses', d: active.length + ' active' },
+      { tool: 'costday', ic: 'flame', t: 'Cost per day', d: money(burn) + ' today' },
+      { tool: 'unsorted', ic: 'wallet', t: 'Which house was this for?', d: uns ? uns + ' payment' + (uns > 1 ? 's' : '') + ' to sort' : 'All sorted', dot: uns },
+      { tool: 'budget', ic: 'hammer', t: 'Budgets', d: over ? over + ' over budget' : 'All on budget', dot: over },
+      { tool: 'payments', ic: 'doc', t: 'Latest payments', d: kmoney(week) + ' this week' }] },
+    { t: 'Buying a house', all: 'deals', c: 'orange', tiles: [
+      { tool: 'check', ic: 'search', t: 'Is this a good deal?', d: 'Compare to real sales' },
+      { tool: 'hoods', ic: 'map', t: 'My neighborhoods', d: rows.length ? rows.length + ' ZIPs, checked Mondays' : 'Turns on at setup' },
+      { tool: 'dial', ic: 'tag', t: 'Most I should offer', d: 'Right now: ' + money(om.P) },
+      { tool: 'loan', ic: 'bank', t: 'Find a loan', d: 'Get quotes from lenders' },
+      { tool: 'sources', ic: 'gavel', t: 'Where to find houses', d: 'Auctions, Land Bank, tax lists' },
+      { tool: 'rules', ic: 'alert', t: 'City rules', d: 'Things that can cost you' }] },
+    { t: 'Fixing and selling', all: 'rehab', c: 'teal', tiles: [
+      { tool: 'price', ic: 'hammer', t: 'Price a fix-up', d: '3 numbers, 1 price' },
+      { tool: 'ai', ic: 'spark', t: 'AI repair estimate', d: 'Second opinion from Claude' },
+      { tool: 'sell', ic: 'trend', t: 'Sell or rent?', d: 'See which pays more' },
+      { tool: 'buyer', ic: 'home', t: 'What a buyer will pay', d: 'Worked out from the rent' }] },
+    { t: 'Lenders', all: 'money', c: 'green', tiles: [
+      { tool: 'lenders', ic: 'send', t: 'Lender updates', d: m.cfg.autoLenders ? 'Autopilot is on' : lendDue ? lg.length + ' to send this week' : lg.length ? 'Sent this week' : 'Add your lenders', dot: lendDue ? lg.length : 0 },
+      { tool: 'loan', ic: 'bank', t: 'Ask for a loan', d: 'One email per lender' },
+      { tool: 'interest', ic: 'wallet', t: 'Loan interest', d: kmoney(interestMo) + ' a month' }] },
+    { t: 'Help', c: 'ink', tiles: [
+      { go: 'team', ic: 'spark', t: 'Ask my AI team', d: 'Ava, Cleo and Penny' },
+      phone ? { href: 'sms:' + phone.replace(/[^0-9+]/g, ''), ic: 'phone', t: 'Text ' + (m.cfg.camName || 'Cam'), d: phone } : null,
+      { href: claudeLink('Give me my GPS morning briefing: new emails that need me, money that came in or went out since yesterday, and anything due this week.'), blank: 1, ic: 'cal', t: 'Morning summary', d: 'Your day in one message' }].filter(Boolean) }
+  ];
+  var tone = function (c) { return c === 'ink' ? 'background:var(--soft);color:var(--ink)' : 'background:var(--' + c + '-soft);color:var(--' + c + ')' };
+  var h = '<section class="hero"><div><h1 class="hello">Good ' + (hr < 12 ? 'morning' : hr < 17 ? 'afternoon' : 'evening') + ', ' + esc(m.cfg.owner || 'Sam') + '</h1>' +
+    '<div class="date">' + (n.length ? n.length + ' thing' + (n.length > 1 ? 's' : '') + ' need you. ' : 'Nothing needs you right now. ') + 'Your houses cost ' + money(burn) + ' today. Tap anything below.</div></div></section>';
+  h += G.map(function (g) {
+    return '<div class="secg"><div class="sech"><h3>' + g.t + '</h3>' + (g.all ? '<button type="button" class="lnk" data-tab="' + g.all + '">See it all</button>' : '') + '</div><div class="tiles">' + g.tiles.map(function (x) {
+      var inner = (x.dot ? '<span class="dot n">' + x.dot + '</span>' : '') + '<span class="ic" style="' + tone(g.c) + '">' + ico(x.ic, 20) + '</span><b>' + esc(x.t) + '</b><small class="trunc2">' + esc(x.d) + '</small>';
+      return x.href ? '<a class="tile" href="' + esc(x.href) + '"' + (x.blank ? ' target="_blank" rel="noopener"' : '') + '>' + inner + '</a>'
+        : '<button type="button" class="tile" data-open="' + (x.tool ? 'tool:' + x.tool : 'tab:' + x.go) + '">' + inner + '</button>';
+    }).join('') + '</div></div>';
+  }).join('');
+  return h;
+}
+function viewTeam() { return '<section class="hero"><h2 class="sec">Your AI team</h2><div class="date" style="margin-top:-8px">What they did this week. Ask them anything, or text Cam.</div></section>' + aiRail(S.m) }
 
 /* ---------- LENDERS (emails are drafts; Sam reviews and sends) ---------- */
 function weekKey() { var d = startOfDay(new Date()); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toISOString().slice(0, 10) }
@@ -1088,7 +1177,7 @@ function lenderEmail(g, m) {
 }
 function lenderCard(m) {
   var gs = lenderGroups(m), done = store('lenders.' + weekKey());
-  var h = '<div class="card" style="margin-top:16px"><div class="ch">' + ico('send') + '<h3>Keep your lenders posted</h3><span class="sp"></span>' + (done ? '<span class="chip g">Done this week</span>' : '') + '</div>' +
+  var h = '<div class="card" data-tool="lenders" style="margin-top:16px"><div class="ch">' + ico('send') + '<h3>Keep your lenders posted</h3><span class="sp"></span>' + (done ? '<span class="chip g">Done this week</span>' : '') + '</div>' +
     '<p class="sm muted" style="margin:-4px 0 12px">Every week the app writes each lender a short update on their houses and when they’ll get paid back.</p>' +
     '<label class="pick" style="border:0;background:var(--card2);border-radius:14px;padding:12px;margin-bottom:12px"><input type="checkbox" data-autolenders' + (m.cfg.autoLenders ? ' checked' : '') + '><span class="grow"><b class="sm">Let my AI team send these</b><br><span class="xs muted">' + (m.cfg.autoLenders ? 'On. Updates go out every Monday morning by themselves. Each one is logged.' : 'Off. Updates wait for you to read and send.') + '</span></span></label>';
   if (!gs.length) return h + '<p class="empty">Add a Lender name to each house in your sheet and this fills in.</p></div>';
@@ -1104,7 +1193,7 @@ function loanCard(m) {
   var ask = d.ask || c.ask, rehab = d.rehab || c.rehab, lenders = lenderList(m);
   var inDays = function (n) { var x = new Date(); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10) };
   var f = function (id, label, v, type) { return '<div class="field"><label for="q_' + id + '">' + label + '</label><input id="q_' + id + '" data-loan="' + id + '" type="' + (type || 'number') + '"' + (type ? '' : ' inputmode="decimal"') + ' value="' + esc(v) + '"></div>' };
-  var h = '<div class="card" style="margin-top:16px"><div class="ch">' + ico('bank') + '<h3>Need a loan for this house?</h3></div>' +
+  var h = '<div class="card" data-tool="loan" style="margin-top:16px"><div class="ch">' + ico('bank') + '<h3>Need a loan for this house?</h3></div>' +
     '<p class="sm muted" style="margin:-4px 0 12px">Writes one email per lender with the deal’s numbers, and says you’re collecting quotes this week. Lenders compete, you pick the best terms.</p>' +
     '<div class="g2 g3">' + f('addr', 'Address (optional)', L.addr || '', 'text') + f('amount', 'Loan amount', L.amount || Math.round((ask + rehab) / 1000) * 1000) + f('months', 'Months to pay back', L.months || c.months + 2) +
     f('close', 'Close by', L.close || inDays(21), 'date') + f('due', 'Quotes due by', L.due || inDays(5), 'date') + '</div>' +
@@ -1203,7 +1292,7 @@ function marketCards(m) {
   var zips = rows.length ? rows.map(function (r) { return r.zip }) : MARKET_ZIPS;
   var zip = d.zip && zips.indexOf(d.zip) >= 0 ? d.zip : (zips.indexOf('44108') >= 0 ? '44108' : zips[0]);
   var f = function (id, label, v, step) { return '<div class="field"><label for="k_' + id + '">' + label + '</label><input id="k_' + id + '" data-chk="' + id + '" type="number" inputmode="decimal" step="' + (step || 'any') + '" value="' + esc(v) + '"></div>' };
-  var h = '<div class="grid two"><div class="card"><div class="ch">' + ico('search') + '<h3>Is this a good deal?</h3></div>' +
+  var h = '<div class="grid two" data-tool="check"><div class="card"><div class="ch">' + ico('search') + '<h3>Is this a good deal?</h3></div>' +
     '<p class="sm muted" style="margin:-4px 0 12px">Type in the house. The app compares it to what houses like it really sold for in that ZIP code.</p>' +
     '<div class="g2"><div class="field"><label for="k_zip">ZIP code</label><select id="k_zip" class="sel" data-chkzip>' + zips.map(function (z) { return '<option' + (z === zip ? ' selected' : '') + '>' + z + '</option>' }).join('') + '</select></div>' +
     f('ask', 'Seller is asking', d.ask || c.ask) + f('beds', 'Bedrooms', d.beds || 3, '1') + f('sqft', 'Square feet', d.sqft || 1300, '50') + '</div>' +
@@ -1212,7 +1301,7 @@ function marketCards(m) {
     '<div class="card" id="chkout"><p class="empty">Tap “Check it” to see what houses like this sell for, and the most you should pay.</p></div></div>';
   // neighborhoods
   var r0 = rows[0];
-  h += '<div class="card" style="margin-top:16px"><div class="ch">' + ico('map') + '<h3>Your neighborhoods</h3><span class="sp"></span>' + (LIVE ? '<button class="btn" type="button" data-mupdate style="padding:6px 12px;font-size:12.5px">Update now</button>' : '') + '</div>';
+  h += '<div class="card" data-tool="hoods" style="margin-top:16px"><div class="ch">' + ico('map') + '<h3>Your neighborhoods</h3><span class="sp"></span>' + (LIVE ? '<button class="btn" type="button" data-mupdate style="padding:6px 12px;font-size:12.5px">Update now</button>' : '') + '</div>';
   if (!rows.length) h += '<p class="empty">Market numbers turn on after setup. Cam runs it once and it refreshes every Monday after that.</p>';
   else {
     h += '<p class="xs muted" style="margin:-4px 0 10px">Checked every Monday' + (r0.updated ? ' · last ' + md(r0.updated) : '') + '. Sold prices are county records through ' + (r0.through ? md(r0.through) : '—') + '. Homes for sale: ' + monthName(r0.month) + '. Tap a ZIP to check a house there.</p><div class="zlist">' +
@@ -1267,7 +1356,7 @@ function bindCheck(d, res) {
   u.onclick = function () {
     var prices = compsFor(res.sales, d.beds, d.sqft).list.map(function (s) { return s[2] });
     var c = Object.assign({}, CALC_DEFAULTS, store('calc') || {}); c.sale = r500(pctl(prices, .75)); c.ask = d.ask; c.rehab = d.rehab;
-    store('calc', c); render(); var el = $('#dial'); if (el) el.scrollIntoView({ behavior: 'smooth' }); toast('Numbers added to the dial');
+    store('calc', c); if (S.tool) S.tool = 'dial'; render(); var el = $('#dial'); if (el) el.scrollIntoView({ behavior: 'smooth' }); toast('Numbers added to the dial');
   };
 }
 
@@ -1279,20 +1368,20 @@ function viewDeals() {
   var h = '<section class="hero"><h2 class="sec">Deals</h2><div class="date" style="margin-top:-8px">Check a house against real sales before you make the offer.</div></section>';
   h += marketCards(S.m);
   h += loanCard(S.m);
-  h += '<div class="grid two" style="margin-top:16px"><div class="card" id="dial"><div class="ch">' + ico('tag') + '<h3>Most you should offer</h3><span class="sp"></span><span class="chip k" id="riskchip"></span></div>' +
+  h += '<div class="grid two" data-tool="dial" style="margin-top:16px"><div class="card" id="dial"><div class="ch">' + ico('tag') + '<h3>Most you should offer</h3><span class="sp"></span><span class="chip k" id="riskchip"></span></div>' +
     '<div class="gauge" id="gauge"></div><div class="g2" style="margin-top:14px">' + f('ask', 'Seller is asking', c.ask) + f('sale', 'It’ll sell for, fixed up', c.sale) + '</div><div id="riskmsg" style="margin-top:12px"></div></div>';
   h += '<div class="card"><div class="ch">' + ico('hammer') + '<h3>Your numbers</h3></div><div class="g2 g3">' + f('rehab', 'Fix-up cost', c.rehab) + f('months', 'Months until sold', c.months, '0.5') + f('profit', 'Profit you want', c.profit) +
     f('rate', 'Loan interest %', c.rate) + f('points', 'Loan fee %', c.points) + f('ltv', '% the loan covers', c.ltv) + f('buyClose', 'Fees to buy $', c.buyClose) + f('sellPct', 'Cost to sell %', c.sellPct) + '</div><div id="maobreak" class="sm" style="margin-top:12px"></div></div></div>';
-  h += '<div class="grid two" style="margin-top:16px"><div class="card"><div class="ch">' + ico('home') + '<h3>What a buyer will pay</h3></div><div class="g2 g3">' + f('rent', 'Rent / month', c.rent) + f('cap', 'Yearly return they want %', c.cap) + f('expPct', 'Their costs, % of rent', c.expPct) + '</div>' +
+  h += '<div class="grid two" style="margin-top:16px"><div class="card" data-tool="buyer"><div class="ch">' + ico('home') + '<h3>What a buyer will pay</h3></div><div class="g2 g3">' + f('rent', 'Rent / month', c.rent) + f('cap', 'Yearly return they want %', c.cap) + f('expPct', 'Their costs, % of rent', c.expPct) + '</div>' +
     '<div class="row" style="margin-top:14px;align-items:baseline;flex-wrap:wrap"><span class="big n" id="inv"></span><span class="muted sm" id="invsub"></span></div><p class="xs muted" style="margin:10px 0 0">Typical Section 8 rent in 44108: about $1,160 for 2 bedrooms, $1,490 for 3, $1,600 for 4. Call the housing authority at 216-348-5000 to confirm.</p></div>';
-  h += '<div class="card links"><div class="ch">' + ico('gavel') + '<h3>Where deals come from</h3></div>' +
+  h += '<div class="card links" data-tool="sources"><div class="ch">' + ico('gavel') + '<h3>Where deals come from</h3></div>' +
     lk('https://cuyahoga.sheriffsaleauction.ohio.gov/', 'gavel', 'County foreclosure auctions', 'Online every Monday, 10% down. Scout will watch it for you.') +
     lk('https://cuyahogalandbank.org/?p=220', 'home', 'County Land Bank houses', 'Cheap county-owned houses you can buy and fix.') +
     lk('https://cuyahogacounty.gov/fiscal-officer/departments/real-property/delinquent-publication', 'doc', 'Owners behind on taxes', 'They’re often ready to sell.') +
     lk('https://data.clevelandohio.gov', 'alert', 'City problem-house lists', 'Condemned houses, code violations, permits, rentals.') +
     lk('https://myplace.cuyahogacounty.gov/', 'bank', 'County property lookup', 'Owner, taxes and past sales for any address.') +
     lk('https://www.cmha.net/housing/landlords/inspections.php', 'check', 'Section 8 inspections', 'The housing authority only starts paying rent after the house passes.') + '</div></div>';
-  h += '<div class="card" style="margin-top:16px"><div class="ch">' + ico('alert') + '<h3>Cleveland rules that can cost you</h3></div><div class="kv" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">' +
+  h += '<div class="card" data-tool="rules" style="margin-top:16px"><div class="ch">' + ico('alert') + '<h3>Cleveland rules that can cost you</h3></div><div class="kv" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">' +
     rule('Lead-safe certificate', 'Needed on rentals built before 1978, redone every 2 years. Out-of-state buyers pay faster for houses that have it.') +
     rule('Register rentals', '$70 per unit with the city. Owners who live outside the county need a local contact, so line one up for your buyers.') +
     rule('Old bills stick to the house', 'Unpaid Cleveland water bills can end up on the tax bill. Check for unpaid bills every time you buy or sell.') +
@@ -1337,7 +1426,8 @@ function calc() {
 /* ---------- events ---------- */
 function bind() {
   $$('[data-tab]').forEach(function (b) { b.onclick = function () { go(b.dataset.tab) } });
-  $$('[data-need]').forEach(function (b) { b.onclick = function () { var n = S.needs[+b.dataset.need]; if (n && n.go) go(n.go) } });
+  $$('[data-open]').forEach(function (b) { b.onclick = function () { var v = b.dataset.open.split(':'); if (v[0] === 'tool') openTool(v[1]); else go(v[1]) } });
+  $$('[data-need]').forEach(function (b) { b.onclick = function () { var n = S.needs[+b.dataset.need]; if (n && n.tool) openTool(n.tool); else if (n && n.go) go(n.go) } });
   $$('[data-house]').forEach(function (b) { b.onclick = function () { openHouse(+b.dataset.house) } });
   $$('[data-view]').forEach(function (b) { b.onclick = function () { S.view = b.dataset.view; store('view', S.view); render() } });
   $$('[data-range]').forEach(function (b) { b.onclick = function () { S.range = +b.dataset.range; render() } });
@@ -1405,7 +1495,7 @@ function findDocs(q) {
 }
 
 $('#refresh').onclick = load;
-$('#bell').onclick = function () { go('today') };
+$('#bell').onclick = function () { openTool('needs') };
 $('#theme').onclick = function () {
   var dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.dataset.theme = dark ? 'light' : 'dark'; store('theme', document.documentElement.dataset.theme);
